@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\ClientRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\ClientRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
 class Client
@@ -13,15 +14,17 @@ class Client
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(["getProducts"])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(["getProducts"])]
     private ?string $name = null;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: product::class)]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Product::class)]
     private Collection $product;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: user::class)]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: User::class)]
     private Collection $user;
 
     public function __construct()
@@ -55,7 +58,7 @@ class Client
         return $this->product;
     }
 
-    public function addProduct(product $product): self
+    public function addProduct(Product $product): self
     {
         if (!$this->product->contains($product)) {
             $this->product->add($product);
@@ -65,7 +68,7 @@ class Client
         return $this;
     }
 
-    public function removeProduct(product $product): self
+    public function removeProduct(Product $product): self
     {
         if ($this->product->removeElement($product)) {
             // set the owning side to null (unless already changed)
@@ -85,7 +88,7 @@ class Client
         return $this->user;
     }
 
-    public function addUser(user $user): self
+    public function addUser(User $user): self
     {
         if (!$this->user->contains($user)) {
             $this->user->add($user);
@@ -95,7 +98,7 @@ class Client
         return $this;
     }
 
-    public function removeUser(user $user): self
+    public function removeUser(User $user): self
     {
         if ($this->user->removeElement($user)) {
             // set the owning side to null (unless already changed)

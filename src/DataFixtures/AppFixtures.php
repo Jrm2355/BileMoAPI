@@ -77,6 +77,7 @@ class AppFixtures extends Fixture
                 $product->setName($p["name"]);
                 $product->setDescription($p["description"]);
                 $product->setPrice($p["price"]);
+                $product->setClient($client);
                 $manager->persist($product);
             }
 
@@ -91,6 +92,7 @@ class AppFixtures extends Fixture
                 $user->setEmail($u["email"]);
                 $user->setLastname($u["lastname"]);
                 $user->setFirstname($u["firstname"]);
+                $user->setClient($client);
                 $manager->persist($user);
             }
         }
