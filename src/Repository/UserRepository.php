@@ -39,6 +39,16 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
+    public function findByClient($value): array
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.client = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
