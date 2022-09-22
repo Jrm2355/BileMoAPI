@@ -30,7 +30,6 @@ class Product
     private ?int $price = null;
 
     #[ORM\ManyToOne(inversedBy: 'product')]
-    #[Groups(["getProducts"])]
     private ?Client $client = null;
 
     public function getId(): ?int
