@@ -44,21 +44,18 @@ class AppFixtures extends Fixture
                     [
                         "username"=>"Jyon",
                         "email"=>"jeremyon.jy@gmail.com",
-                        "password"=>"jyon",
                         "lastname"=>"Yon",
                         "firstname"=>"Jeremy",
                     ],
                     [
                         "username"=>"Jules",
                         "email"=>"jules@gmail.com",
-                        "password"=>"jules",
                         "lastname"=>"Cliento",
                         "firstname"=>"Jules",
                     ],
                     [
                         "username"=>"Marie",
                         "email"=>"marie@gmail.com",
-                        "password"=>"marie",
                         "lastname"=>"Clienta",
                         "firstname"=>"Marie",
                     ],
@@ -84,7 +81,6 @@ class AppFixtures extends Fixture
             foreach ($c["users"] as $u) {
                 $user = new User();
                 $user->setUsername($u["username"]);
-                $user->setPassword($u["password"]);
                 // $user->setPassword(
                 //     $this->passwordHasher->hasPassword(
                 //         $user,
