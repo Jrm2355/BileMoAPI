@@ -29,9 +29,6 @@ class Product
     #[Groups(["getProducts"])]
     private ?int $price = null;
 
-    #[ORM\ManyToOne(inversedBy: 'product')]
-    private ?Client $client = null;
-
     public function getId(): ?int
     {
         return $this->id;
@@ -69,18 +66,6 @@ class Product
     public function setPrice(int $price): self
     {
         $this->price = $price;
-
-        return $this;
-    }
-
-    public function getClient(): ?Client
-    {
-        return $this->client;
-    }
-
-    public function setClient(?Client $client): self
-    {
-        $this->client = $client;
 
         return $this;
     }

@@ -6,15 +6,15 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Entity\User;
-use App\Entity\Client;
 use App\Entity\Product;
+use App\Entity\Client;
 
 class AppFixtures extends Fixture
 {
-    // public function __construct(UserPasswordHasherInterface $passwordHasher)
-    // {
-    //     $this->passwordHasher = $passwordHasher;
-    // }
+    public function __construct(UserPasswordHasherInterface $passwordHasher)
+    {
+        $this->passwordHasher = $passwordHasher;
+    }
 
     public function load(ObjectManager $manager): void
     {
@@ -23,23 +23,8 @@ class AppFixtures extends Fixture
         $client = [
             [
                 "name"=>"BileMo",
-                "products"=>[
-                    [
-                        "name"=>"Iphone X",
-                        "description"=>"Ceci est un super Iphone X !!",
-                        "price"=>1000,
-                    ],
-                    [
-                        "name"=>"Samsung 10",
-                        "description"=>"Ceci est un super Samsung 10 !!",
-                        "price"=>999,
-                    ],
-                    [
-                        "name"=>"HUAWEI",
-                        "description"=>"Ceci est un super Huawei !!",
-                        "price"=>899,
-                    ],
-                ],
+                "roles"=>['ROLE_ADMIN', 'ROLE_USER'],
+                "password"=>"bilemopass",
                 "users"=>[
                     [
                         "username"=>"Jyon",
@@ -62,21 +47,34 @@ class AppFixtures extends Fixture
                 ],
             ],
         ];
+        $product = [
+            [
+                "name"=>"Iphone X",
+                "description"=>"Ceci est un super Iphone X !!",
+                "price"=>1000,
+            ],
+            [
+                "name"=>"Samsung 10",
+                "description"=>"Ceci est un super Samsung 10 !!",
+                "price"=>999,
+            ],
+            [
+                "name"=>"HUAWEI",
+                "description"=>"Ceci est un super Huawei !!",
+                "price"=>899,
+            ],
+        ];
 
         // Parcours et enregistrement des données
         foreach ($client as $c) {
             $client = new Client();
             $client->setName($c["name"]);
+            $client->setRoles($c["roles"]);
+            $client->setPassword(
+                $this->passwordHasher->hashPassword(
+                    $client,
+                    $c["password"]));
             $manager->persist($client);
-
-            foreach ($c["products"] as $p) {
-                $product = new Product();
-                $product->setName($p["name"]);
-                $product->setDescription($p["description"]);
-                $product->setPrice($p["price"]);
-                $product->setClient($client);
-                $manager->persist($product);
-            }
 
             foreach ($c["users"] as $u) {
                 $user = new User();
@@ -91,6 +89,13 @@ class AppFixtures extends Fixture
                 $user->setClient($client);
                 $manager->persist($user);
             }
+        }
+        foreach ($product as $p) {
+            $product = new Product();
+            $product->setName($p["name"]);
+            $product->setDescription($p["description"]);
+            $product->setPrice($p["price"]);
+            $manager->persist($product);
         }
         $manager->flush();
     }

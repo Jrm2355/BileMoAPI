@@ -16,11 +16,11 @@ class User
     #[Groups(["getUsers"])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(["getUsers"])]
     private ?string $username = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     #[Groups(["getUsers"])]
     private ?string $email = null;
 
@@ -33,7 +33,8 @@ class User
     private ?string $lastname = null;
 
     #[ORM\ManyToOne(inversedBy: 'user')]
-    private Client $client;
+    #[Groups(["getUsers"])]
+    private ?Client $client = null;
 
     public function getId(): ?int
     {
