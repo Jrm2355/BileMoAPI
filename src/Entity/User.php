@@ -33,6 +33,7 @@ class User
     private ?string $lastname = null;
 
     #[ORM\ManyToOne(inversedBy: 'user')]
+    #[Groups(["getUsers"])]
     private ?Client $client = null;
 
     public function getId(): ?int
