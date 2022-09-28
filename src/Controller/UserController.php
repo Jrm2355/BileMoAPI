@@ -60,10 +60,9 @@ class UserController extends AbstractController
         $user = new User();
         $user->setUsername($content['username']);
         $user->setemail($content['email']);
-        $user->setPassword($content['password']);
         $user->setFirstname($content['firstname']);
         $user->setLastname($content['lastname']);
-        $user->setClient($clientRepository->find($content['idClient']));
+        $user->setClient($clientRepository->find($content['idClient'])); #Amélioration : regarder dans la session l'id du client pour le founir directement
 
         $userRepository->add($user, true);
 
