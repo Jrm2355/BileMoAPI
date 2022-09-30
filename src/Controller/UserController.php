@@ -46,10 +46,11 @@ class UserController extends AbstractController
     #[Route('/api/users/{id}', name: 'deleteUser', methods:['DELETE'])]
     public function deleteUser(int $id, UserRepository $userRepository,TagAwareCacheInterface $cachePool): JsonResponse
     {
-        $cachePool->invalidateTags(["allUsersCache"]);
+        
         $user = $userRepository->find($id);
         $userClient = $user->getClient();
         if ($user && $userClient == $this->getUser()) {
+            $cachePool->invalidateTags(["allUsersCache"]);
             $userRepository->remove($user, true);
         }
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
