@@ -46,6 +46,25 @@ class AppFixtures extends Fixture
                     ],
                 ],
             ],
+            [
+                "name"=>"SFR",
+                "roles"=>['ROLE_ADMIN', 'ROLE_USER'],
+                "password"=>"bilemopass",
+                "users"=>[
+                    [
+                        "username"=>"ArthurMartin",
+                        "email"=>"arthur.m@gmail.com",
+                        "lastname"=>"Martin",
+                        "firstname"=>"Arthur",
+                    ],
+                    [
+                        "username"=>"Clara",
+                        "email"=>"clara@gmail.com",
+                        "lastname"=>"Chicita",
+                        "firstname"=>"Clara",
+                    ],
+                ],
+            ],
         ];
         $product = [
             [
@@ -79,10 +98,6 @@ class AppFixtures extends Fixture
             foreach ($c["users"] as $u) {
                 $user = new User();
                 $user->setUsername($u["username"]);
-                // $user->setPassword(
-                //     $this->passwordHasher->hasPassword(
-                //         $user,
-                //         $u["password"]));
                 $user->setEmail($u["email"]);
                 $user->setLastname($u["lastname"]);
                 $user->setFirstname($u["firstname"]);
