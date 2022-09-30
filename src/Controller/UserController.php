@@ -3,35 +3,40 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\UserRepository;
 use App\Repository\ClientRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UserController extends AbstractController
 {
-    #[Route('/api/usersClient/{client}', name: 'listUser', methods:['GET'])]
-    public function getUserList(string $client, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer): JsonResponse
+    #[Route('/api/users', name: 'listUser', methods:['GET'])]
+    public function getUserList(UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
     {
-        $clientId = $clientRepository->findBy(['name' => $client]) ;
-        $usersList = $userRepository->findByClient($clientId);
-
-        $jsonUserList = $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
+        $idCache= "usersList";
+        $jsonUserList = $cachePool->get($idCache, function(ItemInterface $item) use ($userRepository, $serializer) {
+            $item->tag("allUsersCache");
+            $usersList = $userRepository->findByClient($this->getUser());
+            return $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
+        });
 
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
     }
 
     #[Route('/api/users/{id}', name: 'detailUser', methods:['GET'])]
-    public function getDetailUser(int $id, UserRepository $userRepository, SerializerInterface $serializer ): JsonResponse
+    public function getDetailUser(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
         $user = $userRepository->find($id);
-        if ($user) {
+        $userClient = $user->getClient();
+        if ($user && $userClient == $this->getUser()) {
             $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
             return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
         }
@@ -39,13 +44,14 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/users/{id}', name: 'deleteUser', methods:['DELETE'])]
-    public function deleteUser(int $id, UserRepository $userRepository ): JsonResponse
+    public function deleteUser(int $id, UserRepository $userRepository,TagAwareCacheInterface $cachePool): JsonResponse
     {
+        $cachePool->invalidateTags(["allUsersCache"]);
         $user = $userRepository->find($id);
-        $userRepository->remove($user, true);
-        // $em->remove($user);
-        // $em->flush();
-
+        $userClient = $user->getClient();
+        if ($user && $userClient == $this->getUser()) {
+            $userRepository->remove($user, true);
+        }
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
@@ -60,10 +66,9 @@ class UserController extends AbstractController
         $user = new User();
         $user->setUsername($content['username']);
         $user->setemail($content['email']);
-        $user->setPassword($content['password']);
         $user->setFirstname($content['firstname']);
         $user->setLastname($content['lastname']);
-        $user->setClient($clientRepository->find($content['idClient']));
+        $user->setClient($this->getUser()); 
 
         $userRepository->add($user, true);
 
