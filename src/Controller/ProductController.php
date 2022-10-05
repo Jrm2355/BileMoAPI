@@ -9,8 +9,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-//use JMS\Serializer\SerializerInterface;
-//use JMS\Serializer\SerializationContext;
 use Symfony\Component\Serializer\SerializerInterface;
 
 class ProductController extends AbstractController
@@ -19,7 +17,6 @@ class ProductController extends AbstractController
     public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
     {
         $idCache = "AllProducts";
-        //$context = SerializationContext::create()->setGroups(['getProducts']);
 
         $jsonProductList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer) {
             $item->tag("allProductsCache");
@@ -29,14 +26,6 @@ class ProductController extends AbstractController
 
         return new JsonResponse($jsonProductList, Response::HTTP_OK, [], true);
     }
-
-    // $idCache = "getAllProducts";
-    // $jsonProductList = $cachePool->get($idCache, function(ItemInterface $item) use ($productRepository, $serializer) {
-    //     $item->tag("productsCache");
-    //     $productsList = $productRepository->findAll();
-    //     return $serializer->serialize($productsList, 'json', ['groups' => 'getProducts']);
-    // });
-    // return new JsonResponse($jsonProductList, Response::HTTP_OK, [], true);
 
     #[Route('/api/products/{id}', name: 'detailProduct', methods:['GET'])]
     public function getDetailProduct(int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse

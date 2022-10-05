@@ -59,8 +59,6 @@ class UserController extends AbstractController
     #[Route('/api/users', name: 'createUser', methods:['POST'])]
     public function createUser(Request $resquest, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator ): JsonResponse
     {
-        //$user = $serializer->deserialize($resquest->getContent(), User::class, 'json');
-
         //récupération des données sous forme de tableau pour avoir l'id du client
         $content = $resquest->toArray();
 
