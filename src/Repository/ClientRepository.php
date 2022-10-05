@@ -68,7 +68,7 @@ class ClientRepository extends ServiceEntityRepository implements PasswordUpgrad
 //            ->setMaxResults(10)
 //            ->getQuery()
 //            ->getResult()
-//        ;
+//        
 //    }
 
 //    public function findOneBySomeField($value): ?Client
@@ -78,6 +78,6 @@ class ClientRepository extends ServiceEntityRepository implements PasswordUpgrad
 //            ->setParameter('val', $value)
 //            ->getQuery()
 //            ->getOneOrNullResult()
-//        ;
+//        
 //    }
 }

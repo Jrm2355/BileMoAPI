@@ -51,7 +51,7 @@ class ProductRepository extends ServiceEntityRepository
 //            ->setMaxResults(10)
 //            ->getQuery()
 //            ->getResult()
-//        ;
+//        
 //    }
 
 //    public function findOneBySomeField($value): ?Product
@@ -61,6 +61,6 @@ class ProductRepository extends ServiceEntityRepository
 //            ->setParameter('val', $value)
 //            ->getQuery()
 //            ->getOneOrNullResult()
-//        ;
+//        
 //    }
 }
