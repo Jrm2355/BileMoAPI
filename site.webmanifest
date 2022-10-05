@@ -1,0 +1,9 @@
+{
+    "$schema": "",
+    "name": "API BileMo",
+    "short_name": "BileMoAPI",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#fff",
+    "description": "Une API pour la société BileMO"
+}

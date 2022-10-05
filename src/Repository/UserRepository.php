@@ -39,7 +39,7 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByClient($value): array
+    public function findByClient(string $value): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.client = :val')
@@ -61,7 +61,7 @@ class UserRepository extends ServiceEntityRepository
 //            ->setMaxResults(10)
 //            ->getQuery()
 //            ->getResult()
-//        ;
+//   
 //    }
 
 //    public function findOneBySomeField($value): ?User
@@ -71,6 +71,6 @@ class UserRepository extends ServiceEntityRepository
 //            ->setParameter('val', $value)
 //            ->getQuery()
 //            ->getOneOrNullResult()
-//        ;
+//        
 //    }
 }
