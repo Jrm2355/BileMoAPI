@@ -39,7 +39,7 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByClient(string $value): array
+    public function findByClient(object $value): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.client = :val')

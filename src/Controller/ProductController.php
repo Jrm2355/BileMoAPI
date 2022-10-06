@@ -9,7 +9,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\SerializationContext;
 
 class ProductController extends AbstractController
 {
@@ -17,11 +18,12 @@ class ProductController extends AbstractController
     public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
     {
         $idCache = "AllProducts";
+        $context = SerializationContext::create()->setGroups(['getProducts']);
 
-        $jsonProductList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer) {
+        $jsonProductList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer, $context) {
             $item->tag("allProductsCache");
             $productsList = $productRepository->findAll();
-            return $serializer->serialize($productsList, 'json', ['getProducts']);
+            return $serializer->serialize($productsList, 'json', $context);
         });
 
         return new JsonResponse($jsonProductList, Response::HTTP_OK, [], true);
@@ -31,11 +33,12 @@ class ProductController extends AbstractController
     public function getDetailProduct(int $id, ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
     {
         $idCache = "product".$id;
+        $context = SerializationContext::create()->setGroups(['getProducts']);
 
-        $jsonProduct = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $id, $serializer) {
+        $jsonProduct = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $id, $serializer, $context) {
             $item->tag("productCache".$id);
             $product = $productRepository->find($id);
-            return $serializer->serialize($product, 'json', ['getProducts']);
+            return $serializer->serialize($product, 'json', $context);
         });
         if ($jsonProduct) {
             return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
