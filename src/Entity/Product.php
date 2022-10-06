@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 
-/*
+/**
  * @Hateoas\Relation(
  *      "self",
  *      href = @Hateoas\Route(
