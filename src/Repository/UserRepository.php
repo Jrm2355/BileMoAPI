@@ -51,7 +51,8 @@ class UserRepository extends ServiceEntityRepository
         ;
     }
 
-    public function findAllUsersWithPagination($page, $limit) {
+    public function findAllUsersWithPagination(int $page, int $limit): array
+    {
         $qb = $this->createQueryBuilder('b')
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);
