@@ -39,14 +39,24 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
-    public function findByClient(string $value): array
+    public function findByClient(object $value, int $page, int $limit): array
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.client = :val')
             ->setParameter('val', $value)
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findAllUsersWithPagination(int $page, int $limit): array
+    {
+        $qb = $this->createQueryBuilder('b')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+        return $qb->getQuery()->getResult();
     }
 
 //    /**

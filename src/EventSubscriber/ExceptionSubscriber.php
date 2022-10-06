@@ -7,9 +7,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 
-class ExeptionSubscriber implements EventSubscriberInterface
+class ExceptionSubscriber implements EventSubscriberInterface
 {
-    public function onKernelExeption(ExceptionEvent $event): void
+    public function onKernelException(ExceptionEvent $event): void
     {
         $exeption = $event->getThrowable();
 
@@ -22,7 +22,7 @@ class ExeptionSubscriber implements EventSubscriberInterface
             $event->setResponse( new JsonResponse($data));
         } else {
             $data = [
-                'status' => 500, // le status n'existe pas cat ce n'est pas une exeption HTTP, donc on met 500 par défaut.
+                'status' => 500, // le status n'existe pas car ce n'est pas une exeption HTTP, donc on met 500 par défaut.
                 'message' => $exeption->getMessage()
             ];
 

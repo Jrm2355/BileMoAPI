@@ -11,7 +11,7 @@
         "doctrine/doctrine-bundle": "^2.7",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.13",
-        "jms/serializer-bundle": "^4.2",
+        "jms/serializer": "^3.18",
         "lexik/jwt-authentication-bundle": "^2.16",
         "nelmio/api-doc-bundle": "^4.10",
         "phpdocumentor/reflection-docblock": "^5.3",
@@ -32,7 +32,8 @@
         "symfony/validator": "5.4.*",
         "symfony/yaml": "5.4.*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "willdurand/hateoas-bundle": "^2.5"
     },
     "config": {
         "allow-plugins": {
