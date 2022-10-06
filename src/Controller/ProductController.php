@@ -3,26 +3,29 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use JMS\Serializer\SerializerInterface;
+use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use JMS\Serializer\SerializerInterface;
-use JMS\Serializer\SerializationContext;
 
 class ProductController extends AbstractController
 {
     #[Route('/api/products', name: 'listProduct', methods:['GET'])]
-    public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
+    public function getAllProducts(ProductRepository $productRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool, Request $request): JsonResponse
     {
-        $idCache = "AllProducts";
         $context = SerializationContext::create()->setGroups(['getProducts']);
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 5);
+        $idCache = "AllProducts". $page . "-" . $limit;
 
-        $jsonProductList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer, $context) {
+        $jsonProductList = $cachePool->get($idCache, function (ItemInterface $item) use ($productRepository, $serializer, $context, $page, $limit) {
             $item->tag("allProductsCache");
-            $productsList = $productRepository->findAll();
+            $productsList = $productRepository->findAllProductsWithPagination($page, $limit);
             return $serializer->serialize($productsList, 'json', $context);
         });
 

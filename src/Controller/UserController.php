@@ -19,12 +19,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class UserController extends AbstractController
 {
     #[Route('/api/users', name: 'listUser', methods:['GET'])]
-    public function getUserList(UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
+    public function getUserList(UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool, Request $request): JsonResponse
     {
-        $idCache= "usersList";
-        $jsonUserList = $cachePool->get($idCache, function(ItemInterface $item) use ($userRepository, $serializer) {
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 5);
+        $idCache= "usersList". $page . "-" . $limit;
+
+        $jsonUserList = $cachePool->get($idCache, function(ItemInterface $item) use ($userRepository, $serializer, $page, $limit) {
             $item->tag("allUsersCache");
-            $usersList = $userRepository->findByClient($this->getUser());
+            $usersList = $userRepository->findByClient($this->getUser(), $page, $limit);
             return $serializer->serialize($usersList, 'json', ['groups' => 'getUsers']);
         });
 
@@ -57,7 +60,7 @@ class UserController extends AbstractController
     }
 
     #[Route('/api/users', name: 'createUser', methods:['POST'])]
-    public function createUser(Request $resquest, UserRepository $userRepository, ClientRepository $clientRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator ): JsonResponse
+    public function createUser(Request $resquest, UserRepository $userRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cachePool ): JsonResponse
     {
         //récupération des données sous forme de tableau pour avoir l'id du client
         $content = $resquest->toArray();
@@ -70,6 +73,7 @@ class UserController extends AbstractController
         $user->setClient($this->getUser()); 
 
         $userRepository->add($user, true);
+        $cachePool->invalidateTags(["allUsersCache"]);
 
         $jsonUser = $serializer->serialize($user, 'json', ['groups' => 'getUsers']);
 
