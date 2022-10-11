@@ -15,15 +15,41 @@ use JMS\Serializer\SerializationContext;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Nelmio\ApiDocBundle\Annotation\Model;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use OpenApi\Annotations as OA;
 
 class UserController extends AbstractController
 {
     /**
-     * Liste des utilisateurs liés à un client
+     * Cette méthode permet de récupérer l'ensemble des utilisateurs pour un client.
      *
-     * @Route("/api/users", methods={"GET"})
-     * @OA\Tag(name="Utilisateur")
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne la liste des utilisateurs d'un client",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     * @OA\Parameter(
+     *     name="page",
+     *     in="query",
+     *     description="La page que l'on veut récupérer",
+     *     @OA\Schema(type="int")
+     * )
+     *
+     * @OA\Parameter(
+     *     name="limit",
+     *     in="query",
+     *     description="Le nombre d'éléments que l'on veut récupérer",
+     *     @OA\Schema(type="int")
+     * )
+     * @OA\Tag(name="User")
+     *
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializer
+     * @param Request $request
+     * @return JsonResponse
      */
     #[Route('/api/users', name: 'listUser', methods:['GET'])]
     public function getUserList(UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool, Request $request): JsonResponse
@@ -43,10 +69,22 @@ class UserController extends AbstractController
     }
 
     /**
-     * Détail d'un utilisateur liés à un client
+     * Cette méthode permet de récupérer le détail d'un utilisateurs pour un client.
      *
-     * @Route("/api/users/{id}", methods={"GET"})
-     * @OA\Tag(name="Utilisateur")
+     * @OA\Response(
+     *     response=200,
+     *     description="Retourne le détail d'un utilisateurs",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     * @OA\Tag(name="User")
+     *
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializer
+     * @param Request $request
+     * @return JsonResponse
      */
     #[Route('/api/users/{id}', name: 'detailUser', methods:['GET'])]
     public function getDetailUser(int $id, UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
@@ -69,10 +107,22 @@ class UserController extends AbstractController
     }
 
     /**
-     * Suppression d'un utilisateurs par son client
+     * Cette méthode permet de supprimer l'utilisateurs d'un client.
      *
-     * @Route("/api/users/{id}", methods={"DELETE"})
-     * @OA\Tag(name="Utilisateur")
+     * @OA\Response(
+     *     response=204,
+     *     description="Supprime un utilisateur d'un client",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     * @OA\Tag(name="User")
+     *
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializer
+     * @param Request $request
+     * @return JsonResponse
      */
     #[Route('/api/users/{id}', name: 'deleteUser', methods:['DELETE'])]
     public function deleteUser(int $id, UserRepository $userRepository,TagAwareCacheInterface $cachePool): JsonResponse
@@ -88,10 +138,22 @@ class UserController extends AbstractController
     }
 
     /**
-     * Création d'un utilisateurs liés à un client
+     * Cette méthode permet d'ajouter un utilisateurs à un client.
      *
-     * @Route("/api/users", methods={"POST"})
-     * @OA\Tag(name="Utilisateur")
+     * @OA\Response(
+     *     response=201,
+     *     description="Ajout d'un utilisateur à un client",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
+     * @OA\Tag(name="User")
+     *
+     * @param UserRepository $userRepository
+     * @param SerializerInterface $serializer
+     * @param Request $request
+     * @return JsonResponse
      */
     #[Route('/api/users', name: 'createUser', methods:['POST'])]
     public function createUser(Request $resquest, UserRepository $userRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cachePool ): JsonResponse
