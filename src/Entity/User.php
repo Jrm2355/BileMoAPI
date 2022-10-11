@@ -25,6 +25,15 @@ use Hateoas\Configuration\Annotation as Hateoas;
  *      ),
  *      exclusion = @Hateoas\Exclusion(groups="getUsers", excludeIf = "expr(not is_granted('ROLE_ADMIN'))"),
  * )
+ * 
+ * @Hateoas\Relation(
+ *      "create",
+ *      href = @Hateoas\Route(
+ *          "createUser",
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="getUsers", excludeIf = "expr(not is_granted('ROLE_ADMIN'))"),
+ * )
+ *
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 class User

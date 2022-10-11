@@ -14,9 +14,17 @@ use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Nelmio\ApiDocBundle\Annotation\Model;
+use OpenApi\Annotations as OA;
 
 class UserController extends AbstractController
 {
+    /**
+     * Liste des utilisateurs liés à un client
+     *
+     * @Route("/api/users", methods={"GET"})
+     * @OA\Tag(name="Utilisateur")
+     */
     #[Route('/api/users', name: 'listUser', methods:['GET'])]
     public function getUserList(UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool, Request $request): JsonResponse
     {
@@ -34,25 +42,38 @@ class UserController extends AbstractController
         return new JsonResponse($jsonUserList, Response::HTTP_OK, [], true);
     }
 
+    /**
+     * Détail d'un utilisateur liés à un client
+     *
+     * @Route("/api/users/{id}", methods={"GET"})
+     * @OA\Tag(name="Utilisateur")
+     */
     #[Route('/api/users/{id}', name: 'detailUser', methods:['GET'])]
     public function getDetailUser(int $id, UserRepository $userRepository, SerializerInterface $serializer, TagAwareCacheInterface $cachePool): JsonResponse
     {
-        $user = $userRepository->find($id);
-        $userClient = $user->getClient();
         $context = SerializationContext::create()->setGroups(['getUsers']);
         $idCache = "user".$id;
 
-        if ($user && $userClient == $this->getUser()) {
-            $jsonUser = $cachePool->get($idCache, function (ItemInterface $item) use ($user, $id, $serializer, $context){
-                $item->tag("userCache".$id);
-                $user;
+        $jsonUser = $cachePool->get($idCache, function (ItemInterface $item) use ($id, $serializer, $context, $userRepository){
+            $item->tag("userCache".$id);
+            if ($user = $userRepository->find($id)) {
                 return $serializer->serialize($user, 'json', $context);
-            });
+            } else {
+                return null;
+            }
+        }); 
+        if ($jsonUser){
             return new JsonResponse($jsonUser, Response::HTTP_OK, [], true);
-        }
+        }  
         return new JsonResponse(null, Response::HTTP_NOT_FOUND);
     }
 
+    /**
+     * Suppression d'un utilisateurs par son client
+     *
+     * @Route("/api/users/{id}", methods={"DELETE"})
+     * @OA\Tag(name="Utilisateur")
+     */
     #[Route('/api/users/{id}', name: 'deleteUser', methods:['DELETE'])]
     public function deleteUser(int $id, UserRepository $userRepository,TagAwareCacheInterface $cachePool): JsonResponse
     {
@@ -66,6 +87,12 @@ class UserController extends AbstractController
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);
     }
 
+    /**
+     * Création d'un utilisateurs liés à un client
+     *
+     * @Route("/api/users", methods={"POST"})
+     * @OA\Tag(name="Utilisateur")
+     */
     #[Route('/api/users', name: 'createUser', methods:['POST'])]
     public function createUser(Request $resquest, UserRepository $userRepository, SerializerInterface $serializer, UrlGeneratorInterface $urlGenerator, TagAwareCacheInterface $cachePool ): JsonResponse
     {
