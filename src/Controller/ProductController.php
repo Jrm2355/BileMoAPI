@@ -78,6 +78,14 @@ class ProductController extends AbstractController
      *        @OA\Items(ref=@Model(type=Product::class, groups={"getProducts"}))
      *     )
      * )
+     * @OA\Response(
+     *     response=404,
+     *     description="id incorrect",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=Product::class, groups={"getProducts"}))
+     *     )
+     * )
      * @OA\Tag(name="Product")
      *
      * @param ProducRepository $productRepository

@@ -79,6 +79,14 @@ class UserController extends AbstractController
      *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
      *     )
      * )
+     * @OA\Response(
+     *     response=404,
+     *     description="id incorrect",
+     *     @OA\JsonContent(
+     *        type="array",
+     *        @OA\Items(ref=@Model(type=User::class, groups={"getUsers"}))
+     *     )
+     * )
      * @OA\Tag(name="User")
      *
      * @param UserRepository $userRepository
